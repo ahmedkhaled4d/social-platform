@@ -3,12 +3,12 @@
  * @description Authentication based class
  *  */
 class Template {
-/**
-  * Verify token middleware
-  * @param {String} lastname - Request
-  * @param {String} token -EmailTemplate
-  * @returns {String} The response String
-  */
+  /**
+   * Verify token middleware
+   * @param {String} lastname - Request
+   * @param {String} token -EmailTemplate
+   * @returns {String} The response String
+   */
   static articleBlockedTemplate(lastname) {
     return `
     <div style="background:#e5eeff;width:100%;padding:20px 0;">

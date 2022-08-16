@@ -1,63 +1,63 @@
 /* eslint-disable func-names */
 module.exports = (sequelize, DataTypes) => {
   const Article = sequelize.define(
-    'Article',
+    "Article",
     {
       slug: {
         type: DataTypes.STRING,
-        allowNull: false
+        allowNull: false,
       },
       title: {
         type: DataTypes.STRING,
-        allowNull: false
+        allowNull: false,
       },
       readtime: {
         type: DataTypes.STRING,
-        allowNull: false
+        allowNull: false,
       },
       description: {
         type: DataTypes.STRING,
-        allowNull: false
+        allowNull: false,
       },
       body: {
         type: DataTypes.TEXT,
-        allowNull: false
+        allowNull: false,
       },
       blocked: {
         type: DataTypes.BOOLEAN,
-        allowNull: true
+        allowNull: true,
       },
       tagList: {
         type: DataTypes.ARRAY(DataTypes.STRING),
-        allowNull: true
+        allowNull: true,
       },
       gallery: {
         type: DataTypes.ARRAY(DataTypes.STRING),
-        allowNull: true
+        allowNull: true,
       },
       authorId: {
         type: DataTypes.INTEGER,
-        allowNull: false
+        allowNull: false,
       },
       views: {
-        type: DataTypes.INTEGER
+        type: DataTypes.INTEGER,
       },
     },
     {}
   );
-  Article.associate = function (models) {
+  Article.associate = function(models) {
     // associations can be defined here
     Article.belongsTo(models.User, {
-      as: 'author',
-      foreignKey: 'authorId',
-      targetKey: 'id',
-      onUpdate: 'CASCADE',
-      onDelete: 'CASCADE'
+      as: "author",
+      foreignKey: "authorId",
+      targetKey: "id",
+      onUpdate: "CASCADE",
+      onDelete: "CASCADE",
     });
     Article.hasMany(models.Comment, {
-      foreignKey: 'articleId',
-      onDelete: 'CASCADE',
-      onUpdate: 'CASCADE'
+      foreignKey: "articleId",
+      onDelete: "CASCADE",
+      onUpdate: "CASCADE",
     });
   };
   return Article;
