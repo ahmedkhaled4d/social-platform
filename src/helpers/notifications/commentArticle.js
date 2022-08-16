@@ -1,6 +1,6 @@
-import db from '../../sequelize/models';
-import favouritedBy from '../Favourites';
-import notify from './NotifyForBookmarks';
+import db from "../../sequelize/models";
+import favouritedBy from "../Favourites";
+import notify from "./NotifyForBookmarks";
 
 const { User, Bookmarks } = db;
 
@@ -8,13 +8,13 @@ const commentArticle = async (comment) => {
   try {
     const author = await User.findOne({
       where: {
-        id: comment.userId
-      }
+        id: comment.userId,
+      },
     });
     const favourites = await Bookmarks.findAll({
       where: {
         slug: comment.slug,
-      }
+      },
     });
     if (favourites) {
       favourites.map(async (fav) => {
@@ -29,11 +29,11 @@ const commentArticle = async (comment) => {
       `;
 
         const data = {
-          resource: 'articles',
-          action: 'comment',
+          resource: "articles",
+          action: "comment",
           user,
           inAppMessage,
-          emailMessage
+          emailMessage,
         };
         const res = await notify(data);
         return res;
@@ -41,7 +41,7 @@ const commentArticle = async (comment) => {
     }
   } catch (err) {
     return {
-      errors: err
+      errors: err,
     };
   }
 };

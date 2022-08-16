@@ -3,13 +3,13 @@
  * @description Authentication based class
  *  */
 class Template {
-/**
-  * Verify token middleware
-  * @param {String} firstname - Request
-  * @param {String} lastname  - Response
-  * @param {String} token -EmailTemplate
-  * @returns {String} The response String
-  */
+  /**
+   * Verify token middleware
+   * @param {String} firstname - Request
+   * @param {String} lastname  - Response
+   * @param {String} token -EmailTemplate
+   * @returns {String} The response String
+   */
   static getPasswordResetTemplete(firstname, lastname, token) {
     return `
     <div style="background:#e5eeff;width:100%;padding:20px 0;">

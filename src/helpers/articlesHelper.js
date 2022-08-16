@@ -1,10 +1,10 @@
 /* eslint-disable require-jsdoc */
 /* eslint-disable valid-jsdoc */
-import slug from 'slug';
-import uniqid from 'uniqid';
-import models from '../sequelize/models';
-import readTime from './ReadTime.helper';
-import workers from '../workers';
+import slug from "slug";
+import uniqid from "uniqid";
+import models from "../sequelize/models";
+import readTime from "./ReadTime.helper";
+import workers from "../workers";
 
 const { Article, User } = models;
 const { uploadImageWorker } = workers;
@@ -28,9 +28,7 @@ class ArticlesHelper {
    * @returns {object} - Contains an article information.
    */
   static async createNewArticle(req) {
-    const {
-      title, body, description, tagList
-    } = req.body;
+    const { title, body, description, tagList } = req.body;
     const { id } = req.user;
     const newSlug = this.createSlug(title);
     const readtime = readTime(body);
@@ -39,7 +37,7 @@ class ArticlesHelper {
       title,
       description,
       body,
-      tagList: tagList.split(','),
+      tagList: tagList.split(","),
       authorId: id,
       readtime,
       views: 0,
@@ -47,7 +45,7 @@ class ArticlesHelper {
 
     // Uplooad article image
     if (req.files) {
-      uploadImageWorker(req.files, dataValues.id, 'article', null);
+      uploadImageWorker(req.files, dataValues.id, "article", null);
     }
 
     const userInfo = await this.getUserInfo(id);
@@ -66,13 +64,25 @@ class ArticlesHelper {
     const result = await Article.findAll(
       { where: { blocked: false } },
       {
-        include: [{
-          as: 'author',
-          model: User,
-          attributes: ['username', 'bio', 'avatar']
-        }],
-        attributes: ['id', 'slug', 'title', 'description', 'readtime', 'body', 'tagList', 'updatedAt', 'createdAt'],
-        limit: 10
+        include: [
+          {
+            as: "author",
+            model: User,
+            attributes: ["username", "bio", "avatar"],
+          },
+        ],
+        attributes: [
+          "id",
+          "slug",
+          "title",
+          "description",
+          "readtime",
+          "body",
+          "tagList",
+          "updatedAt",
+          "createdAt",
+        ],
+        limit: 10,
       }
     );
     return result;
@@ -81,12 +91,24 @@ class ArticlesHelper {
   static async getOneSlug(newSlug) {
     const result = await Article.findOne({
       where: { slug: newSlug },
-      include: [{
-        as: 'author',
-        model: User,
-        attributes: ['username', 'bio', 'avatar']
-      }],
-      attributes: ['slug', 'title', 'description', 'readtime', 'body', 'tagList', 'views', 'updatedAt', 'createdAt']
+      include: [
+        {
+          as: "author",
+          model: User,
+          attributes: ["username", "bio", "avatar"],
+        },
+      ],
+      attributes: [
+        "slug",
+        "title",
+        "description",
+        "readtime",
+        "body",
+        "tagList",
+        "views",
+        "updatedAt",
+        "createdAt",
+      ],
     });
     return result;
   }
