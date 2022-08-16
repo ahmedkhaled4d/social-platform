@@ -1,15 +1,13 @@
 /* eslint-disable import/no-cycle */
-import articles from '../../helpers/articlesHelper';
-import models from '../../sequelize/models';
-import readTime from '../../helpers/ReadTime.helper';
-import eventEmitter from '../../helpers/notifications/EventEmitter';
-import findUser from '../../helpers/FindUser';
-import AuthorNotifier from '../../helpers/NotifyAuthorOnArticleBlock';
-import workers from '../../workers';
+import articles from "../../helpers/articlesHelper";
+import models from "../../sequelize/models";
+import readTime from "../../helpers/ReadTime.helper";
+import eventEmitter from "../../helpers/notifications/EventEmitter";
+import findUser from "../../helpers/FindUser";
+import AuthorNotifier from "../../helpers/NotifyAuthorOnArticleBlock";
+import workers from "../../workers";
 
-const {
-  notifyAuthorblock, notifyAuthorUnblock
-} = AuthorNotifier;
+const { notifyAuthorblock, notifyAuthorUnblock } = AuthorNotifier;
 const { uploadImageWorker } = workers;
 
 const {
@@ -18,17 +16,17 @@ const {
   LikeDislike,
   ReportedArticles,
   BlockedArticles,
-  Share
+  Share,
 } = models;
 // eslint-disable-next-line no-array-constructor
 const days = new Array(
-  'Monday',
-  'Tuesday',
-  'Wednesday',
-  'Thursday',
-  'Friday',
-  'Saturday',
-  'Sunday'
+  "Monday",
+  "Tuesday",
+  "Wednesday",
+  "Thursday",
+  "Friday",
+  "Saturday",
+  "Sunday"
 );
 
 /**
@@ -49,7 +47,7 @@ class articlesController {
     if (user.dataValues.verified === false) {
       return res
         .status(403)
-        .send({ error: 'Please Verify your account, first!' });
+        .send({ error: "Please Verify your account, first!" });
     }
 
     const dataValues = await articles.createNewArticle(req);
@@ -64,10 +62,10 @@ class articlesController {
       updatedAt,
       createdAt,
       readtime,
-      views
+      views,
     } = dataValues;
     const userInfo = await findUser(author.username);
-    eventEmitter.emit('publishArticle', userInfo.id, slug);
+    eventEmitter.emit("publishArticle", userInfo.id, slug);
     const result = {
       // eslint-disable-next-line max-len
       slug,
@@ -79,11 +77,11 @@ class articlesController {
       createdAt,
       author,
       readtime,
-      views
+      views,
     };
 
     res.status(201).send({
-      article: result
+      article: result,
     });
   }
 
@@ -96,10 +94,10 @@ class articlesController {
     const allArticle = await articles.getAllArticle();
 
     if (!allArticle[0]) {
-      return res.status(404).send({ error: 'Whoops! No Articles found!' });
+      return res.status(404).send({ error: "Whoops! No Articles found!" });
     }
     res.status(200).send({
-      articles: allArticle
+      articles: allArticle,
     });
   }
 
@@ -113,17 +111,19 @@ class articlesController {
 
     // @check if the article's slug exist
     const result = await Article.findOne({ where: { slug } });
-    if (result === null) { return res.status(404).send({ error: 'This Slug Not found!' }); }
+    if (result === null) {
+      return res.status(404).send({ error: "This Slug Not found!" });
+    }
     const oneArticle = await articles.getOneSlug(slug);
     await Article.update(
       {
-        views: oneArticle.dataValues.views += 1,
+        views: (oneArticle.dataValues.views += 1),
       },
       { where: { slug } }
     );
     res.status(200).send({
       status: 200,
-      article: oneArticle
+      article: oneArticle,
     });
   }
 
@@ -134,13 +134,11 @@ class articlesController {
    */
   static async updateArticle(req, res) {
     const { slug } = req.params;
-    const {
-      title, body, description, tagList
-    } = req.body;
+    const { title, body, description, tagList } = req.body;
 
     let updatedSlug;
     if (tagList !== undefined) {
-      updatedSlug = tagList.split(',');
+      updatedSlug = tagList.split(",");
     } else {
       updatedSlug = req.foundArticle.tagList;
     }
@@ -150,7 +148,7 @@ class articlesController {
       title: title || req.foundArticle.title,
       body: body || req.foundArticle.body,
       description: description || req.foundArticle.description,
-      tagList: updatedSlug
+      tagList: updatedSlug,
     };
 
     // @generate an updated new slug
@@ -165,21 +163,25 @@ class articlesController {
         body: updateSlug.body,
         description: updateSlug.description,
         tagList: updateSlug.tagList,
-        readtime: newReadTime
+        readtime: newReadTime,
       },
       { where: { slug }, returning: true }
     );
 
-
     // Uplooad article image
     if (req.files) {
-      uploadImageWorker(req.files, updatedArticle[1][0].dataValues.id, 'article', null);
+      uploadImageWorker(
+        req.files,
+        updatedArticle[1][0].dataValues.id,
+        "article",
+        null
+      );
     }
 
     // @returning the response
     res.status(200).send({
-      message: 'Article updated successfully',
-      article: updateSlug
+      message: "Article updated successfully",
+      article: updateSlug,
     });
   }
 
@@ -195,7 +197,7 @@ class articlesController {
     await Article.destroy({ where: { slug } });
 
     // @returning the response
-    res.status(200).send({ message: 'Article deleted successfully!' });
+    res.status(200).send({ message: "Article deleted successfully!" });
   }
 
   /**
@@ -212,11 +214,11 @@ class articlesController {
       comment,
       username,
       createdAt: new Date(),
-      updatedAt: new Date()
+      updatedAt: new Date(),
     }).then((out) => {
       res.status(201).send({
         status: 201,
-        data: out
+        data: out,
       });
     });
   }
@@ -247,21 +249,21 @@ class articlesController {
         where: {
           articleId: foundArticle.id,
           userId: currentUser,
-          likes: 1
-        }
+          likes: 1,
+        },
       });
       const hasDisliked = await LikeDislike.findAll({
         where: {
           articleId: foundArticle.id,
           userId: currentUser,
-          dislikes: 1
-        }
+          dislikes: 1,
+        },
       });
 
       // If the user has already liked send a response
       if (hasLiked[0]) {
         return res.status(403).json({
-          message: `User ${currentUser} has already liked article: ${slug}`
+          message: `User ${currentUser} has already liked article: ${slug}`,
         });
       }
 
@@ -281,7 +283,7 @@ class articlesController {
         userId: currentUser,
         articleId: foundArticle.id,
         dislikes: 0,
-        likes: 1
+        likes: 1,
       });
 
       return res
@@ -318,21 +320,21 @@ class articlesController {
         where: {
           articleId: foundArticle.id,
           userId: currentUser,
-          likes: 1
-        }
+          likes: 1,
+        },
       });
       const hasDisliked = await LikeDislike.findAll({
         where: {
           articleId: foundArticle.id,
           userId: currentUser,
-          dislikes: 1
-        }
+          dislikes: 1,
+        },
       });
 
       // If the user has already disliked send a response
       if (hasDisliked[0]) {
         return res.status(403).json({
-          message: `User ${currentUser} has already disliked article: ${slug}`
+          message: `User ${currentUser} has already disliked article: ${slug}`,
         });
       }
 
@@ -343,7 +345,7 @@ class articlesController {
           { where: { id: hasLiked[0].id } }
         );
         return res.status(200).json({
-          message: `User ${currentUser} has disliked article ${slug}`
+          message: `User ${currentUser} has disliked article ${slug}`,
         });
       }
 
@@ -352,7 +354,7 @@ class articlesController {
         userId: currentUser,
         articleId: foundArticle.id,
         dislikes: 1,
-        likes: 0
+        likes: 0,
       });
 
       return res
@@ -384,15 +386,15 @@ class articlesController {
 
     // Get likes
     const likeCount = await LikeDislike.count({
-      where: { articleId: foundArticle.id, likes: 1 }
+      where: { articleId: foundArticle.id, likes: 1 },
     });
 
     return res.status(200).json({
       status: 200,
       data: {
         articleSlug: slug,
-        numberOfLikes: likeCount
-      }
+        numberOfLikes: likeCount,
+      },
     });
   }
 
@@ -419,16 +421,16 @@ class articlesController {
     const likeCount = await LikeDislike.count({
       where: {
         articleId: foundArticle.id,
-        dislikes: 1
-      }
+        dislikes: 1,
+      },
     });
 
     return res.status(200).json({
       status: 200,
       data: {
         articleSlug: slug,
-        numberOfDislikes: likeCount
-      }
+        numberOfDislikes: likeCount,
+      },
     });
   }
 
@@ -463,23 +465,26 @@ class articlesController {
     const { description } = req.body;
     const article = await Article.findOne({ where: { slug } });
     const reporterUsername = await ReportedArticles.findOne({
-      where: { slug }
+      where: { slug },
     });
-    const { dataValues: { email, lastName } } = await User.findOne({
-      where: { id: article.authorId }
+    const {
+      dataValues: { email, lastName },
+    } = await User.findOne({
+      where: { id: article.authorId },
     });
     const username = !reporterUsername
       ? null
       : reporterUsername.dataValues.username;
-    const repoterId = username === null ? null : await User.findOne({ where: { username } });
+    const repoterId =
+      username === null ? null : await User.findOne({ where: { username } });
     const id = repoterId === null ? null : repoterId.dataValues.id;
     const object = {
       reporterId: id,
       articleId: article.id,
       authorId: article.authorId,
       moderatorId: user.id,
-      blockedDay: days[new Date().getDay() - 1] || 'Sunday',
-      description
+      blockedDay: days[new Date().getDay() - 1] || "Sunday",
+      description,
     };
 
     BlockedArticles.create(object).then(async (responce) => {
@@ -493,9 +498,9 @@ class articlesController {
       res.status(201).send({
         status: 201,
         data: {
-          message: 'Article blocked successfully',
-          responce
-        }
+          message: "Article blocked successfully",
+          responce,
+        },
       });
     });
   }
@@ -509,8 +514,10 @@ class articlesController {
     const { slug } = req.params;
     const { id, authorId } = await Article.findOne({ where: { slug } });
 
-    const { dataValues: { email, lastName } } = await User.findOne({
-      where: { id: authorId }
+    const {
+      dataValues: { email, lastName },
+    } = await User.findOne({
+      where: { id: authorId },
     });
 
     BlockedArticles.destroy({ where: { articleId: id } }).then(async () => {
@@ -519,16 +526,16 @@ class articlesController {
       res.status(200).send({
         status: 200,
         data: {
-          message: 'Article unblocked successfully'
-        }
+          message: "Article unblocked successfully",
+        },
       });
     });
   }
 
   /**
-    *  @param {object} req
-    * @param {object} res
-    * @returns {object} Object representing the response returned
+   *  @param {object} req
+   * @param {object} res
+   * @returns {object} Object representing the response returned
    */
 
   // eslint-disable-next-line require-jsdoc
@@ -538,11 +545,11 @@ class articlesController {
     await Share.create({
       userId: id,
       slug,
-      provider
+      provider,
     });
     return res.status(200).json({
-      message: 'Thanks for sharing!',
-      article: req.article
+      message: "Thanks for sharing!",
+      article: req.article,
     });
   }
 }
