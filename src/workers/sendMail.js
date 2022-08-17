@@ -1,8 +1,8 @@
 /* eslint-disable no-console */
-import 'regenerator-runtime';
-import { forEach } from 'lodash';
-import models from '../sequelize/models';
-import sendMail from '../helpers/mailer/SendAnyEmail';
+import "regenerator-runtime";
+import { forEach } from "lodash";
+import models from "../sequelize/models";
+import sendMail from "../helpers/mailer/SendAnyEmail";
 
 const { Emails } = models;
 
@@ -14,12 +14,12 @@ const sendMailsInQueue = async () => {
     sendMail(mailItem.mail, mailItem.html, mailItem.subject);
     await Emails.update(
       {
-        sent: true
+        sent: true,
       },
       {
         where: {
-          id: mailItem.id
-        }
+          id: mailItem.id,
+        },
       }
     );
   });
