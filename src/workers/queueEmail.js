@@ -1,6 +1,6 @@
 /* eslint-disable no-console */
-import 'regenerator-runtime';
-import models from '../sequelize/models';
+import "regenerator-runtime";
+import models from "../sequelize/models";
 
 const { Emails } = models;
 
@@ -12,7 +12,7 @@ module.exports = async (emailObject, html, subject) => {
     subject,
     sent: false,
     createdAt: new Date(),
-    updatedAt: new Date()
+    updatedAt: new Date(),
   });
   console.log(`PID: ${process.pid} === FINISHED QUEING EMAIL ===`);
 };
