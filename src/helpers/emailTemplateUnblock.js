@@ -3,12 +3,12 @@
  * @description Authentication based class
  *  */
 class TemplateUnblock {
-/**
-  * Verify token middleware
-  * @param {String} lastname - Request
-  * @param {string} link - Article link
-  * @returns {String} The response String
-  */
+  /**
+   * Verify token middleware
+   * @param {String} lastname - Request
+   * @param {string} link - Article link
+   * @returns {String} The response String
+   */
   static articleUnBlockedTemplate(lastname, link) {
     return `
     <div style="background:#e5eeff;width:100%;padding:20px 0;">

@@ -1,13 +1,9 @@
-import models from '../../sequelize/models';
+import models from "../../sequelize/models";
 
-const {
-  Article,
-  Comment,
-  Share
-} = models;
+const { Article, Comment, Share } = models;
 
 /**
- * @Author - Mireille Niwemuhuza
+ * @Author - ahmed khaled
  */
 class statsController {
   /**
@@ -19,15 +15,14 @@ class statsController {
   static async getViews(req, res) {
     const { slug } = req.params;
     const articleViews = await Article.findAll({
-      attributes: ['title', 'views'],
+      attributes: ["title", "views"],
       where: {
-        slug
-      }
+        slug,
+      },
     });
     const { title, views } = articleViews[0];
     return res.status(200).json({
-      data: { title, views }
-
+      data: { title, views },
     });
   }
 
@@ -43,16 +38,16 @@ class statsController {
     // Count comments
     const countComment = await Comment.count({
       where: {
-        slug
-      }
+        slug,
+      },
     });
 
     return res.status(200).json({
       status: 200,
       data: {
         slug,
-        countComment
-      }
+        countComment,
+      },
     });
   }
 
@@ -69,16 +64,16 @@ class statsController {
     const shares = await Share.count({
       where: {
         slug,
-        provider: 'facebook'
-      }
+        provider: "facebook",
+      },
     });
 
     return res.status(200).json({
       status: 200,
       data: {
         slug,
-        shares
-      }
+        shares,
+      },
     });
   }
 
@@ -95,16 +90,16 @@ class statsController {
     const shares = await Share.count({
       where: {
         slug,
-        provider: 'twitter'
-      }
+        provider: "twitter",
+      },
     });
 
     return res.status(200).json({
       status: 200,
       data: {
         slug,
-        shares
-      }
+        shares,
+      },
     });
   }
 
@@ -121,16 +116,16 @@ class statsController {
     const shares = await Share.count({
       where: {
         slug,
-        provider: 'email'
-      }
+        provider: "email",
+      },
     });
 
     return res.status(200).json({
       status: 200,
       data: {
         slug,
-        shares
-      }
+        shares,
+      },
     });
   }
 
@@ -146,16 +141,16 @@ class statsController {
     // Count shares on email
     const shares = await Share.count({
       where: {
-        slug
-      }
+        slug,
+      },
     });
 
     return res.status(200).json({
       status: 200,
       data: {
         slug,
-        shares
-      }
+        shares,
+      },
     });
   }
 }

@@ -5,7 +5,7 @@ import Tokenizer from "../../helpers/Token.helper";
 const { Chat, User, follows } = db;
 const { Op } = sequelize;
 /**
- * @author Rukundo Eric
+ * @author ahmed khaled
  * @class chatController
  * @description this class performs chat
  */
@@ -39,13 +39,11 @@ class chatController {
       })
       .then((data) => {
         if (!data[0]) {
-          return res
-            .status(200)
-            .json({
-              message: "you do not have any followers currently",
-              followers: data,
-              me: req.user,
-            });
+          return res.status(200).json({
+            message: "you do not have any followers currently",
+            followers: data,
+            me: req.user,
+          });
         }
         return res.status(200).json({ followers: data, me: req.user });
       });

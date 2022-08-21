@@ -1,8 +1,8 @@
-import db from '../../sequelize/models';
+import db from "../../sequelize/models";
 
 const { Highlights } = db;
 /**
- * @author Diane Mahoro
+ * @author ahmed khaled
  * @class Highlight
  * @description this class performs the whole of highlightings
  */
@@ -14,9 +14,7 @@ class Highlight {
    */
   static async createHighlights(req, res) {
     const { id } = req.user;
-    const {
-      highlightText, comment, occurencyNumber
-    } = req.body;
+    const { highlightText, comment, occurencyNumber } = req.body;
     const { article } = req; // This contains the article
     const newHighlight = await Highlights.create({
       articleId: article.id,
@@ -27,7 +25,7 @@ class Highlight {
     });
     return res.status(201).json({
       Message: `Thank you for highlighting this text ${newHighlight.highlightText}`,
-      data: newHighlight
+      data: newHighlight,
     });
   }
 }
