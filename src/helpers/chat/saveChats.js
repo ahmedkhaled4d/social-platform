@@ -1,10 +1,10 @@
-import db from '../../sequelize/models';
-import findUser from '../FindUser';
+import db from "../../sequelize/models";
+import findUser from "../FindUser";
 
 const { Chat } = db;
 
 /**
- * @author Elie Mugenzi
+ * @author ahmed khaled
  * @class ChatHelper
  * @description this class performs the whole authentication
  */
@@ -15,9 +15,7 @@ class ChatHelper {
    * @returns {Object} - Response object
    */
   static async saveMessage(message) {
-    const {
-      sender, receiver, message: chatMessage, read
-    } = message;
+    const { sender, receiver, message: chatMessage, read } = message;
     const { id: senderId } = await findUser(sender);
     const infos = await findUser(receiver);
 
@@ -25,7 +23,7 @@ class ChatHelper {
       senderId,
       recieverId: infos.id,
       message: chatMessage,
-      read
+      read,
     });
     return newChat;
   }
@@ -37,14 +35,17 @@ class ChatHelper {
    */
   static async updateReadMessages(username) {
     const { id } = await findUser(username);
-    const result = await Chat.update({
-      read: true,
-    }, {
-      where: {
-        recieverId: id,
-        read: false,
+    const result = await Chat.update(
+      {
+        read: true,
+      },
+      {
+        where: {
+          recieverId: id,
+          read: false,
+        },
       }
-    });
+    );
     return result;
   }
 
@@ -56,11 +57,10 @@ class ChatHelper {
   static async getUnreadMessageCount(username) {
     const { id } = await findUser(username);
     const result = await Chat.count({
-      where: { recieverId: id, read: false }
+      where: { recieverId: id, read: false },
     });
     return result;
   }
 }
-
 
 export default ChatHelper;

@@ -1,16 +1,15 @@
-
-import mailer from 'nodemailer';
-import mailTemplate from './MailTemplate.helper';
+import mailer from "nodemailer";
+import mailTemplate from "./MailTemplate.helper";
 
 const transporter = mailer.createTransport({
-  service: 'gmail',
+  service: "gmail",
   auth: {
     user: process.env.AUTHOSHAVEN_USER,
-    pass: process.env.AUTHOSHAVEN_PASS
-  }
+    pass: process.env.AUTHOSHAVEN_PASS,
+  },
 });
 /**
- * @author Elie Mugenzi
+ * @author ahmed khaled
  * @class MailHelper
  * @description A helper class for sending emails
  */
@@ -20,15 +19,13 @@ class MailHelper {
    * @param {Object} param0 - Object which contains email information
    * @returns {Object} Results after sending mail
    */
-  static async sendMail({
-    to, names, subject, message, token
-  }) {
+  static async sendMail({ to, names, subject, message, token }) {
     const msg = {
       from: `Authors Haven<${process.env.AUTHOSHAVEN_USER}>`,
       to,
       subject,
       text: message,
-      html: mailTemplate({ to, token, names })
+      html: mailTemplate({ to, token, names }),
     };
     const result = await transporter.sendMail(msg);
     return result;

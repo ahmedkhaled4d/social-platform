@@ -1,6 +1,6 @@
-import sendEmail from './mailer/SendAnyEmail';
-import Template from './emailTemplateBlock';
-import TemplateUnblock from './emailTemplateUnblock';
+import sendEmail from "./mailer/SendAnyEmail";
+import Template from "./emailTemplateBlock";
+import TemplateUnblock from "./emailTemplateUnblock";
 
 /**
  * @author EmyRukundo
@@ -16,10 +16,11 @@ class notifyAuthor {
    */
   static async notifyAuthorblock(data) {
     const mail = {
-      lastName: data.lastName, email: data.email
+      lastName: data.lastName,
+      email: data.email,
     };
     const htmlToSend = Template.articleBlockedTemplate(mail.lastName);
-    await sendEmail(mail, htmlToSend, 'Notification');
+    await sendEmail(mail, htmlToSend, "Notification");
   }
 
   /**
@@ -31,10 +32,14 @@ class notifyAuthor {
   static async notifyAuthorUnblock(data) {
     const link = `${process.env.BASE_URL}/api/articles/${data.slug}`;
     const mailUnblock = {
-      lastName: data.lastName, email: data.email
+      lastName: data.lastName,
+      email: data.email,
     };
-    const htmlToSendU = TemplateUnblock.articleUnBlockedTemplate(mailUnblock.lastName, link);
-    await sendEmail(mailUnblock, htmlToSendU, 'Congratulation');
+    const htmlToSendU = TemplateUnblock.articleUnBlockedTemplate(
+      mailUnblock.lastName,
+      link
+    );
+    await sendEmail(mailUnblock, htmlToSendU, "Congratulation");
   }
 }
 export default notifyAuthor;

@@ -1,13 +1,13 @@
-import jwt from 'jsonwebtoken';
-import dotenv from 'dotenv';
-import { omit } from 'lodash';
-import sequelize from 'sequelize';
-import tokenHelper from '../../helpers/Token.helper';
-import HashHelper from '../../helpers/hashHelper';
-import db from '../../sequelize/models/index';
-import verifyTemplate from '../../helpers/emailVerifyTemplate';
-import template from '../../helpers/emailTemplate';
-import workers from '../../workers';
+import jwt from "jsonwebtoken";
+import dotenv from "dotenv";
+import { omit } from "lodash";
+import sequelize from "sequelize";
+import tokenHelper from "../../helpers/Token.helper";
+import HashHelper from "../../helpers/hashHelper";
+import db from "../../sequelize/models/index";
+import verifyTemplate from "../../helpers/emailVerifyTemplate";
+import template from "../../helpers/emailTemplate";
+import workers from "../../workers";
 
 const { generateToken, decodeToken } = tokenHelper;
 const { User, Blacklist, Opt } = db;
@@ -17,7 +17,7 @@ const { Op } = sequelize;
 dotenv.config();
 
 /**
- * @author Elie Mugenzi
+ * @author ahmed khaled
  * @class AuthController
  * @description this class performs the whole authentication
  */
@@ -34,16 +34,16 @@ class AuthController {
     if (Object.keys(req.body).length === 0) {
       return res.status(400).json({
         status: 400,
-        error: 'No data sent'
+        error: "No data sent",
       });
     }
 
-    body = await omit(body, ['roles']);
+    body = await omit(body, ["roles"]);
 
     const userObject = {
       ...body,
       password: HashHelper.hashPassword(body.password),
-      verified: false
+      verified: false,
     };
 
     const newUser = await User.create(userObject);
@@ -56,29 +56,37 @@ class AuthController {
 
       await Opt.create({
         userId: newUser.id,
-        type: 'email'
+        type: "email",
       });
 
       await Opt.create({
         userId: newUser.id,
-        type: 'inapp'
+        type: "inapp",
       });
 
-      const htmlToSend = verifyTemplate.sendVerification(`${newUser.firstName} ${newUser.lastName}`, newUser.email, token);
+      const htmlToSend = verifyTemplate.sendVerification(
+        `${newUser.firstName} ${newUser.lastName}`,
+        newUser.email,
+        token
+      );
 
-      queueEmailWorker({ email: newUser.email }, htmlToSend, 'Welcome to Authorshaven', null);
+      queueEmailWorker(
+        { email: newUser.email },
+        htmlToSend,
+        "Welcome to Authorshaven",
+        null
+      );
 
       res.status(201).send({
         status: 201,
         data: {
-          message: 'You will reveive an account verification email shortly',
+          message: "You will reveive an account verification email shortly",
           email: `${newUser.email}`,
-          token
+          token,
         },
       });
     }
   }
-
 
   /**
    * Verifies account
@@ -92,22 +100,22 @@ class AuthController {
       const user = await decodeToken(token);
       await User.update(
         {
-          verified: true
+          verified: true,
         },
         {
           where: {
-            email: user.email
-          }
+            email: user.email,
+          },
         }
       );
       res.status(202).json({
         status: 202,
-        message: 'Account is now verified!'
+        message: "Account is now verified!",
       });
     } catch (err) {
       res.status(400).json({
         status: 400,
-        error: `Invalid Request ${err}`
+        error: `Invalid Request ${err}`,
       });
     }
   }
@@ -121,7 +129,7 @@ class AuthController {
   static async SignOut(req, res) {
     const {
       user: { id },
-      token
+      token,
     } = req;
 
     const { exp } = await decodeToken(token);
@@ -134,33 +142,36 @@ class AuthController {
 
     res.json({
       status: 200,
-      message: 'You are now signed out!'
+      message: "You are now signed out!",
     });
   }
 
   /**
-  * signup controller
-  * @param {Object} req - Response
-  * @param {Object} res - Response
-  * @param {Function} next -Next
-  * @returns {Object} The response object
-  */
+   * signup controller
+   * @param {Object} req - Response
+   * @param {Object} res - Response
+   * @param {Function} next -Next
+   * @returns {Object} The response object
+   */
   static async login(req, res) {
     const { email } = req.body;
     const users = await User.findOne({
       where: {
-        [Op.or]: [{ email }, { username: email }]
-      }
+        [Op.or]: [{ email }, { username: email }],
+      },
     });
     if (users) {
       if (
-        !HashHelper.comparePassword(req.body.password, users.dataValues.password)
+        !HashHelper.comparePassword(
+          req.body.password,
+          users.dataValues.password
+        )
       ) {
         res.status(400).send({
           status: 400,
           error: {
-            message: 'Incorrect password'
-          }
+            message: "Incorrect password",
+          },
         });
       } else {
         generateToken({
@@ -170,9 +181,9 @@ class AuthController {
           res.status(200).send({
             status: 200,
             data: {
-              message: 'User logged in successful',
-              token
-            }
+              message: "User logged in successful",
+              token,
+            },
           });
         });
       }
@@ -180,8 +191,8 @@ class AuthController {
       res.status(404).send({
         status: 404,
         error: {
-          message: 'User with that email does not exist.'
-        }
+          message: "User with that email does not exist.",
+        },
       });
     }
   }
@@ -196,21 +207,24 @@ class AuthController {
   static async RequestPasswordReset(req, res) {
     User.findAll({
       where: {
-        email: req.body.email
-      }
+        email: req.body.email,
+      },
     }).then(async (response) => {
       if (response[0]) {
         const token = await generateToken({
           userId: response[0].id,
           userName: response[0].username,
-          userEmail: response[0].email
+          userEmail: response[0].email,
         });
 
         const user = response[0];
         const { firstName, lastName, email } = user.dataValues;
         const link = `${process.env.BASE_URL}/api/auth/reset/${token}`;
         const mail = {
-          firstName, lastName, link, email
+          firstName,
+          lastName,
+          link,
+          email,
         };
         const htmlToSend = template.getPasswordResetTemplete(
           mail.firstName,
@@ -218,21 +232,21 @@ class AuthController {
           mail.link
         );
 
-        queueEmailWorker(mail, htmlToSend, 'Password Reset', null);
+        queueEmailWorker(mail, htmlToSend, "Password Reset", null);
 
         return res.status(201).send({
           status: 201,
           data: {
             message: `A reset link will be sent to <${mail.email}> shortly.`,
             email: `${mail.email}`,
-            token
-          }
+            token,
+          },
         });
       }
 
       return res.status(404).send({
         status: 404,
-        data: { message: 'User with that email in not exist' }
+        data: { message: "User with that email in not exist" },
       });
     });
   }
@@ -251,7 +265,7 @@ class AuthController {
       const aprvToken = await jwt.sign(
         {
           userId: user.userId,
-          userName: user.userName
+          userName: user.userName,
         },
         process.env.SECRET_KEY,
         { expiresIn: 60 * 10 }
@@ -260,17 +274,17 @@ class AuthController {
       res.status(200).send({
         status: 200,
         data: {
-          message: 'Below is your reset link',
+          message: "Below is your reset link",
           link,
-          token: aprvToken
-        }
+          token: aprvToken,
+        },
       });
     } catch (error) {
       res.status(error.status || 500).send({
         status: error.status || 500,
         error: {
-          message: 'Token is invalid or expired, Please request  another one'
-        }
+          message: "Token is invalid or expired, Please request  another one",
+        },
       });
     }
   }
@@ -288,20 +302,19 @@ class AuthController {
     const password = HashHelper.hashPassword(req.body.newpassword);
     User.update(
       {
-        password
+        password,
       },
       {
         where: {
-          id: token.userId
-        }
+          id: token.userId,
+        },
       }
-    )
-      .then(() => {
-        res.status(201).send({
-          status: 201,
-          data: { message: 'Password changed successful' }
-        });
+    ).then(() => {
+      res.status(201).send({
+        status: 201,
+        data: { message: "Password changed successful" },
       });
+    });
   }
 }
 export default AuthController;
