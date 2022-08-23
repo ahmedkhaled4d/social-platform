@@ -30,7 +30,7 @@ const days = new Array(
 );
 
 /**
- * @Author - Audace Uhiriwe
+ * @Author - ahmed khaled
  */
 class articlesController {
   /**
