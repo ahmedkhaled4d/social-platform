@@ -1,9 +1,9 @@
-import db from '../../sequelize/models';
+import db from "../../sequelize/models";
 
 const { Bookmarks } = db;
 
 /**
- * @author Diane Mahoro
+ * @author ahmed khaled
  * @class Bookmark
  * @description this class performs the whole of rating
  */
@@ -19,29 +19,28 @@ class Bookmark {
     const { slug } = req.params;
     const data = {
       slug,
-      userId: id
+      userId: id,
     };
 
     const response = await Bookmarks.findAll({
       where: {
         slug,
-        userId: id
-      }
-
+        userId: id,
+      },
     });
     if (!response[0]) {
       const newBookmark = await Bookmarks.create({
         slug: data.slug,
-        userId: data.userId
+        userId: data.userId,
       });
       return res.status(201).json({
         data: newBookmark,
-        message: 'Bookmark created'
+        message: "Bookmark created",
       });
     }
     await Bookmarks.destroy({ where: { slug, userId: id }, logging: false });
     res.status(200).json({
-      message: 'Bookmark deleted'
+      message: "Bookmark deleted",
     });
   }
 
@@ -55,11 +54,11 @@ class Bookmark {
     const { id } = req.user;
     const yourBookmarks = await Bookmarks.findAll({
       where: {
-        userId: id
-      }
+        userId: id,
+      },
     });
     res.status(200).json({
-      data: yourBookmarks
+      data: yourBookmarks,
     });
   }
 }

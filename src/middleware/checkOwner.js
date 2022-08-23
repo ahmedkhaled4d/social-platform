@@ -1,5 +1,5 @@
 /* eslint-disable valid-jsdoc */
-import models from '../sequelize/models';
+import models from "../sequelize/models";
 
 const { Article, User } = models;
 
@@ -8,7 +8,7 @@ const { Article, User } = models;
  */
 class checkOwner {
   /**
-   * @author Audace Uhiriwe
+   * @author ahmed khaled
    * @param {req} - request
    * @param {res} - response
    */
@@ -18,20 +18,27 @@ class checkOwner {
 
     // @check if the article's slug exist
     const result = await Article.findOne({ where: { slug } });
-    if (result === null) return res.status(404).send({ error: 'Slug Not found!' });
+    if (result === null)
+      return res.status(404).send({ error: "Slug Not found!" });
 
-    if (roles.includes('moderator' || 'admin')) {
+    if (roles.includes("moderator" || "admin")) {
       req.foundArticle = result.dataValues;
       return next();
     }
 
     // @check if that user is verified
     const { dataValues } = await User.findOne({ where: { id } });
-    if (dataValues.verified === false) return res.status(403).send({ error: 'Please Verify your account, first!' });
+    if (dataValues.verified === false)
+      return res
+        .status(403)
+        .send({ error: "Please Verify your account, first!" });
 
     // @check if the user who logged in - is the owner of that slug
     const response = await Article.findOne({ where: { slug, authorId: id } });
-    if (!response) return res.status(403).send({ message: 'Sorry!, You are not the owner of this article' });
+    if (!response)
+      return res
+        .status(403)
+        .send({ message: "Sorry!, You are not the owner of this article" });
 
     req.foundArticle = response.dataValues;
     return next();

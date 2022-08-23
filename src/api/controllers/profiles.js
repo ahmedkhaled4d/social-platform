@@ -90,7 +90,7 @@ export default class ProfilesController {
   }
 
   /**
-   * @Author - Audace Uhiriwe
+   * @Author - ahmed khaled
    * @param  {object} req
    * @param  {object} res
    * @return {object} returns an object containing the user's profiles
@@ -109,7 +109,7 @@ export default class ProfilesController {
   }
 
   /**
-   * @Author - Audace Uhiriwe
+   * @Author - ahmed khaled
    * @param  {object} req
    * @param  {object} res
    * @return {object} returns an object containing the user's profiles
