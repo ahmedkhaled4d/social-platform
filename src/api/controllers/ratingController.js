@@ -5,7 +5,7 @@ import db from '../../sequelize/models/index';
 const { ArticleRatings } = db;
 
 /**
- * @author Eric Rukundo
+ * @author Ahmed khaled
  * @class ArticleRatings
  * @description this class performs the whole authentication
  */
