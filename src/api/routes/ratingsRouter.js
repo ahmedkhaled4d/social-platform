@@ -9,5 +9,6 @@ const {
 } = ratingsController;
 
 ratingsRouter.post('/articles/:slug', verifyToken, calculateArticleRatings);
+// ratingsRouter.post('/articles/:slug', verifyToken, calculateArticleRatings);
 
 export default ratingsRouter;
