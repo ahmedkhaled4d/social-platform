@@ -1,5 +1,5 @@
-import authHelper from '../helpers/Token.helper';
-import db from '../sequelize/models';
+import authHelper from "../helpers/Token.helper";
+import db from "../sequelize/models";
 
 const { User, Blacklist } = db;
 /**
@@ -17,7 +17,7 @@ export default class Auth {
   static async verifyToken(req, res, next) {
     const { token } = req.headers;
     if (!token) {
-      return res.status(401).json({ status: 401, error: 'Token is missing' });
+      return res.status(401).json({ status: 401, error: "Token is missing" });
     }
 
     try {
@@ -26,7 +26,9 @@ export default class Auth {
         const user = await User.findAll({ where: { id: decoded.id } });
         const blackListed = await Blacklist.findAll({ where: { token } });
         if (!user[0] || blackListed[0]) {
-          return res.status(401).json({ status: 401, error: 'Token is invalid' });
+          return res
+            .status(401)
+            .json({ status: 401, error: "Token is invalid" });
         }
         req.token = token;
         req.user = user[0].dataValues;
@@ -35,7 +37,7 @@ export default class Auth {
         return res.status(500).json({ error: `${error}` });
       }
     } catch (error) {
-      if (error.name && error.name === 'TokenExpiredError') {
+      if (error.name && error.name === "TokenExpiredError") {
         return res.status(401).json({ status: 401, message: error.message });
       }
       return res.status(500).json({ error: `${error}` });
@@ -51,10 +53,12 @@ export default class Auth {
    */
   static async checkOwnership(req, res, next) {
     const { user, params } = req;
-    if ((user.id === parseInt(params.id, 10)) || (user.roles.includes('admin'))) {
+    if (user.id === parseInt(params.id, 10) || user.roles.includes("admin")) {
       return next();
     }
-    return res.status(403).json({ message: 'You are not allowed to perform this operation' });
+    return res
+      .status(403)
+      .json({ message: "You are not allowed to perform this operation" });
   }
 
   /**
@@ -66,10 +70,12 @@ export default class Auth {
    */
   static async checkIsAdmin(req, res, next) {
     const { user } = req;
-    if (user && user.roles.includes('admin')) {
+    if (user && user.roles.includes("admin")) {
       return next();
     }
-    return res.status(403).json({ message: 'You are not allowed to perform this operation' });
+    return res
+      .status(403)
+      .json({ message: "You are not allowed to perform this operation" });
   }
 
   /**
@@ -81,13 +87,13 @@ export default class Auth {
    */
   static async checkIsModerator(req, res, next) {
     const { user } = req;
-    if (user.roles.includes('moderator') || user.roles.includes('admin')) {
+    if (user.roles.includes("moderator") || user.roles.includes("admin")) {
       return next();
     }
     return res.status(403).send({
       status: 403,
       data: {
-        message: 'You are not allowed to perform this operation',
+        message: "You are not allowed to perform this operation",
       },
     });
   }
