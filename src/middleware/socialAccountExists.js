@@ -1,5 +1,5 @@
-import models from '../sequelize/models';
-import tokenGeneration from '../helpers/Token.helper';
+import models from "../sequelize/models";
+import tokenGeneration from "../helpers/Token.helper";
 
 const userExists = {
   async google(req, res, next) {
@@ -10,9 +10,16 @@ const userExists = {
       },
     });
     if (currentUser.length > 0) {
-      const token = await tokenGeneration.generateToken(currentUser[0].dataValues);
+      const token = await tokenGeneration.generateToken(
+        currentUser[0].dataValues
+      );
       const {
-        id, firstName, lastName, email, socialId, provider
+        id,
+        firstName,
+        lastName,
+        email,
+        socialId,
+        provider,
       } = currentUser[0].dataValues;
       return res.status(200).json({
         message: `Welcome to Authors Haven ${displayName} `,
@@ -23,7 +30,7 @@ const userExists = {
           lastName,
           email,
           socialId,
-          provider
+          provider,
         },
       });
     }
@@ -37,9 +44,15 @@ const userExists = {
       },
     });
     if (currentUser.length > 0) {
-      const token = await tokenGeneration.generateToken(currentUser[0].dataValues);
+      const token = await tokenGeneration.generateToken(
+        currentUser[0].dataValues
+      );
       const {
-        id, firstName, lastName, socialId, provider
+        id,
+        firstName,
+        lastName,
+        socialId,
+        provider,
       } = currentUser[0].dataValues;
       return res.status(200).json({
         message: `Welcome to Authors Haven ${displayName} `,

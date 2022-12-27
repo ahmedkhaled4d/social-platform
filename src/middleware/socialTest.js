@@ -2,7 +2,7 @@ export default (req, res, next) => {
   req.user = {
     id: req.body.id,
     displayName: "ahmed khaled",
-    name: { familyName: "Niwemuhuza", givenName: "Mireille" },
+    name: { familyName: "Khaled", givenName: "Essa" },
     emails: [{ value: req.body.email, verified: true }],
     photos: [
       {
