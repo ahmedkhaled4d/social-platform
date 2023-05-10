@@ -3,7 +3,7 @@ import sendMail from '../mailer/SendAnyEmail';
 import eventEmitter from './EventEmitter';
 
 const { Notification, Opt, User } = db;
-
+// notify action 
 const notify = async (data) => {
   let inAppNotification = {};
   let emailNotification = {};

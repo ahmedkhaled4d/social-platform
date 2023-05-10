@@ -4,7 +4,7 @@ import db from '../../sequelize/models';
 
 const { User, follows } = db;
 dotenv.config();
-
+//  const url = `${process.env.BASE_URL}/api/articles/${slug}`;
 export default async (authorId, slug) => {
   try {
     const author = await User.findOne({
